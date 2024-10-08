@@ -1,0 +1,7 @@
+---
+- name: Vérifier que le service Apache est en cours d'exécution
+  hosts: all
+  become: yes
+  tasks:
+    - name: Vérifier que le service Apache est en cours d'exécution
+      service_facts:

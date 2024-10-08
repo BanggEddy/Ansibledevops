@@ -1,0 +1,47 @@
+---
+- name: Installer Apache sur l'hôte cible
+  hosts: all
+  become: yes
+  tasks:
+    - name: Installer le paquet Apache
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Installer le paquet Apache (RedHat)
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: S'assurer que le service Apache est démarré
+      service:
+        name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}"
+        state: started
+        enabled: yes
+
+    - name: Copier le fichier de configuration depuis l'ordinateur local vers l'hôte cible
+      copy:
+        src: /home/user01/apache_config.conf
+        dest: /etc/apache2/sites-available/apache_config.conf
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+    - name: Activer le fichier de configuration Apache
+      command: a2ensite apache_config.conf
+      notify: Redémarrer Apache
+
+    - name: Modifier les permissions du fichier de configuration
+      file:
+        path: /etc/apache2/sites-available/apache_config.conf
+        mode: '0644'
+        owner: www-data
+        group: www-data
+
+  handlers:
+    - name: Redémarrer Apache
+      service:
+        name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}"
+        state: restarted

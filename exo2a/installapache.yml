@@ -1,0 +1,22 @@
+---
+- name: Installer Apache sur l'hôte cible
+  hosts: all
+  become: yes
+  tasks:
+    - name: Installer le paquet Apache
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Installer le paquet Apache (RedHat)
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: S'assurer que le service Apache est démarré
+      service:
+        name: "{{ 'apache2' if ansible_os_family == 'Debian' else 'httpd' }}"
+        state: started
+        enabled: yes

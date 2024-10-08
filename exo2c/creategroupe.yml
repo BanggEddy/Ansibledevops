@@ -1,0 +1,27 @@
+- name: Créer un utilisateur et un groupe
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Passlib
+      apt:
+        name: python3-passlib
+        state: present
+
+    - name: Créer un groupe
+      group:
+        name: efrei
+        state: present
+
+    - name: Créer un utilisateur
+      user:
+        name: root
+        group: efrei
+        state: present
+        shell: /bin/bash
+        password: root
+
+    - name: Ajouter l'utilisateur au groupe
+      user:
+        name: root
+        groups: efrei
+        append: yes

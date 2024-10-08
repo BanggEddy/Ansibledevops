@@ -1,0 +1,6 @@
+all:
+  hosts:
+    mon_hote:
+      ansible_host: 127.0.0.2
+      ansible_user: root
+      ansible_ssh_pass: Espoir15!

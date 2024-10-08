@@ -1,0 +1,24 @@
+---
+- name: Installer plusieurs paquets sur les hôtes
+  hosts: all
+  become: yes
+  vars:
+    packages:
+      - apache2
+      - vim
+      - htop
+
+  tasks:
+    - name: Installer les paquets
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+      when: ansible_os_family == "Debian"
+
+    - name: Installer les paquets (RedHat)
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+      when: ansible_os_family == "RedHat"
